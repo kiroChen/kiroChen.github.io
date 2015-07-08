@@ -129,6 +129,19 @@ Quick">
    	       
 	</article>
 	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/08/git-useful-skills/" title="Git 常用技能">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Git 常用技能</span>
+</a>
+</div>
+
+
+</nav>
+
 	
 
 </div>  
@@ -257,6 +270,11 @@ $(document).ready(function(){
   $(window).scroll(function(){
     o.css("top",Math.max(80,260-$(this).scrollTop()));
   });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
   
   $(window).resize(function(){
     getSize(); 
