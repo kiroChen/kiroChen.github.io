@@ -1,0 +1,412 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>cookie和session在Express中应用 | Kiro&#39;s BLOG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Kiro">
+    
+
+    
+    <meta name="description" content="cookie和sessionHttp是一个无状态协议，客户端在对服务端发送连番请求的时候，服务端无法将其连番请求统一为同一用户。于是有了cookie 和 session会话。cookie采用的是在客户端保持状态的方案，它是客户端的会话状态的一种储存机制。它是服务器在本地机器上存储的小段文本或者是内存中的一段数据，并随每一个请求发送至同一个服务器。IETF RFC 2965 HTTP State M">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cookie和session在Express中应用">
+<meta property="og:url" content="http://kirochen.com/2015/07/09/about-cookie-session/index.html">
+<meta property="og:site_name" content="Kiro's BLOG">
+<meta property="og:description" content="cookie和sessionHttp是一个无状态协议，客户端在对服务端发送连番请求的时候，服务端无法将其连番请求统一为同一用户。于是有了cookie 和 session会话。cookie采用的是在客户端保持状态的方案，它是客户端的会话状态的一种储存机制。它是服务器在本地机器上存储的小段文本或者是内存中的一段数据，并随每一个请求发送至同一个服务器。IETF RFC 2965 HTTP State M">
+<meta property="og:updated_time" content="2015-07-09T09:13:43.570Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cookie和session在Express中应用">
+<meta name="twitter:description" content="cookie和sessionHttp是一个无状态协议，客户端在对服务端发送连番请求的时候，服务端无法将其连番请求统一为同一用户。于是有了cookie 和 session会话。cookie采用的是在客户端保持状态的方案，它是客户端的会话状态的一种储存机制。它是服务器在本地机器上存储的小段文本或者是内存中的一段数据，并随每一个请求发送至同一个服务器。IETF RFC 2965 HTTP State M">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
+    
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Kiro&#39;s BLOG">Kiro&#39;s BLOG</a></h1>
+				<h2 class="blog-motto">当你的才华还撑不起你的野心时，你就应该静下心来学习</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kirochen.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/09/about-cookie-session/" title="cookie和session在Express中应用" itemprop="url">cookie和session在Express中应用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-09T08:07:43.000Z" itemprop="datePublished"> 发表于 2015-07-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#cookie和session"><span class="toc-number">1.</span> <span class="toc-text">cookie和session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Express中的cookie"><span class="toc-number">2.</span> <span class="toc-text">Express中的cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Express中的session"><span class="toc-number">3.</span> <span class="toc-text">Express中的session</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存存储（默认）"><span class="toc-number">3.1.</span> <span class="toc-text">内存存储（默认）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mongodb存储"><span class="toc-number">3.2.</span> <span class="toc-text">mongodb存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis存储"><span class="toc-number">3.3.</span> <span class="toc-text">redis存储</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="cookie和session">cookie和session</h2><p>Http是一个无状态协议，客户端在对服务端发送连番请求的时候，服务端无法将其连番请求统一为同一用户。<br>于是有了cookie 和 session会话。cookie采用的是在客户端保持状态的方案，它是客户端的会话状态的一种储存机制。它是服务器在本地机器上存储的小段文本或者是内存中的一段数据，并随每一个请求发送至同一个服务器。IETF RFC 2965 HTTP State Management Mechanism 是通用cookie规范。网络服务器用HTTP头信息向客户端发送cookies，在客户终端，浏览器解析这些cookies并将它们保存为一个本地文件，或者本地内存中数据，它会自动将同一服务器的任何请求缚上这些cookies，由于采用服务器端保持状态的方案在客户端也需要保存一个标识，所以session机制借助于cookie机制来达到保存标识的目的，这样就可以解决HTTP协议无状态的缺陷。（摘自<a href="http://blog.51yip.com/php/938.html" target="_blank" rel="external">链接</a>）。</p>
+<h2 id="Express中的cookie">Express中的cookie</h2><p>由于Http的无状态特性，首先产生了cookie这种技术来解决这个问题，其作用流程如下：<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">* </span>客户端向服务端请求数据。</span><br><span class="line"><span class="bullet">* </span>服务端想客户端发送cookie。</span><br><span class="line"><span class="bullet">* </span>客户端保存cookie。</span><br><span class="line"><span class="bullet">* </span>之后每次请求服务端都会自动带上cookie，直到cookie失效（浏览器关闭或者限制时间）。</span><br></pre></td></tr></table></figure></p>
+<p>我们可以对cookie进行相应的设置，设置的参数有：<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">* </span>path：表示 cookie 影响到的路径，匹配该路径才发送这个 cookie。</span><br><span class="line"><span class="bullet">* </span>expires 和 maxAge：告诉浏览器这个 cookie 什么时候过期，expires 是 UTC 格式时间，maxAge 是 cookie 多久后过期的相对时间。当不设置这两个选项时，会产生 session cookie，session cookie 是 transient 的，当用户关闭浏览器时，就被清除。一般用来保存 session 的 session_id。</span><br><span class="line"><span class="bullet">* </span>secure：当 secure 值为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效。</span><br><span class="line"><span class="bullet">* </span>httpOnly：浏览器不允许脚本操作 document.cookie 去更改 cookie。一般情况下都应该设置这个为 true，这样可以避免被 xss 攻击拿到 cookie。</span><br></pre></td></tr></table></figure></p>
+<p>在Express4.x版本之后，session和cookies等模块不再包含在Express框架中，需要单独添加相应模块，Express中使用cookie-parser模块去操作cookie。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*app.js*/</span><br><span class="line">	var cookieParser = require(<span class="string">'cookie-parser'</span>);</span><br><span class="line">	......</span><br><span class="line">	app.use(cookieParser(<span class="string">'kiroloveyou'</span>));</span><br><span class="line"></span><br><span class="line">/*app.get or route.get*/</span><br><span class="line">	router.get(<span class="string">'/cookie'</span>, <span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">		<span class="keyword">if</span>(req.cookies.user) &#123;</span><br><span class="line">			console.log(req.cookies);</span><br><span class="line">			res.send(<span class="string">'first time'</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			res.cookie(<span class="string">'user'</span>, <span class="string">'kiro'</span>, &#123;maxAge: <span class="number">60</span> * <span class="number">1000</span>&#125;); //<span class="built_in">set</span> <span class="number">1</span>min</span><br><span class="line">			res.send(<span class="string">'welcome'</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Express中的session">Express中的session</h2><p>cookie 虽然很方便，但是使用 cookie 有一个很大的弊端，cookie 中的所有数据在客户端就可以被修改，数据非常容易被伪造，那么一些重要的数据就不能存放在 cookie 中了，而且如果 cookie 中数据字段太多会影响传输效率。为了解决这些问题，就产生了 session，session 中的数据是保留在服务器端的。</p>
+<p>session 的运作通过一个 session_id 来进行。session_id 通常是存放在客户端的 cookie 中，比如在 Express 中，默认是 connect.sid 这个字段，当请求到来时，服务端检查 cookie 中保存的 session_id 并通过这个 session_id 与服务器端的 session data 关联起来，进行数据的保存和修改。</p>
+<p>这意思就是说，当你浏览一个网页时，服务端随机产生一个 1024 比特长的字符串，然后存在你 cookie 中的 connect.sid字 段中。当你下次访问时，cookie 会带有这个字符串，然后浏览器就知道你是上次访问过的某某某，然后从服务器的存储中取出上次记录在你身上的数据。由于字符串是随机产生的，而且位数足够 多，所以也不担心有人能够伪造。伪造成功的概率比坐在家里编程时被邻居家的狗突然闯入并咬死的几率还低。</p>
+<p>session 可以存放在 1）内存、2）cookie本身、3）redis 或 memcached 等缓存中，或者4）数据库中。线上来说，缓存的方案比较常见，存数据库的话，查询效率相比前三者都太低，不推荐；cookie session 有安全性问题，下面会提到。</p>
+<p>Express 中操作 session 要用到 Express-session (<a href="https://github.com/Expressjs/session" target="_blank" rel="external">https://github.com/Expressjs/session</a> ) 这个模块，主要的方法就是session(options)，其中 options 中包含可选参数，主要有：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* <span class="string">name:</span> 设置 cookie 中，保存 session 的字段名称，默认为 connect.sid 。</span><br><span class="line">* <span class="string">store:</span> session 的存储方式，默认存放在内存中，也可以使用 redis，mongodb 等。Express 生态中都有相应模块的支持。</span><br><span class="line">* <span class="string">secret:</span> 通过设置的 secret 字符串，来计算 hash 值并放在 cookie 中，使产生的 signedCookie 防篡改。</span><br><span class="line">* <span class="string">cookie:</span> 设置存放 session id 的 cookie 的相关选项，默认为(<span class="string">default:</span> &#123; <span class="string">path:</span> <span class="string">'/'</span>, <span class="string">httpOnly:</span> <span class="literal">true</span>, <span class="string">secure:</span> <span class="literal">false</span>, <span class="string">maxAge:</span> <span class="literal">null</span> &#125;)</span><br><span class="line">* <span class="string">genid:</span> 产生一个新的 session_id 时，所使用的函数， 默认使用 uid2 这个 npm 包。</span><br><span class="line">* <span class="string">rolling:</span> 每个请求都重新设置一个 cookie，默认为 <span class="literal">false</span>。</span><br><span class="line">* <span class="string">resave:</span> 即使 session 没有被修改，也保存 session 值，默认为 <span class="literal">true</span>。</span><br></pre></td></tr></table></figure></p>
+<h3 id="内存存储（默认）">内存存储（默认）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/*app.js*/</span><br><span class="line">	var session = require(<span class="string">'Express-session'</span>);</span><br><span class="line">	......</span><br><span class="line">	app.use(session(&#123;</span><br><span class="line">		secret:<span class="string">'ilovekiro'</span>,</span><br><span class="line">		cookie:&#123;</span><br><span class="line">			maxAge:<span class="number">30</span>*<span class="number">1000</span></span><br><span class="line">		&#125;,</span><br><span class="line">		resave:<span class="literal">true</span>,</span><br><span class="line">		saveUninitialized: <span class="literal">true</span></span><br><span class="line">	&#125;));</span><br><span class="line"></span><br><span class="line">/*app.get or route.get*/</span><br><span class="line">	router.get(<span class="string">'/session'</span>, <span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">		<span class="keyword">if</span>(req.session.isvisit) &#123;</span><br><span class="line">			console.log(req.session.id);</span><br><span class="line">			console.log(req.session);</span><br><span class="line">			req.session.count += <span class="number">1</span>;</span><br><span class="line">			res.send(<span class="string">"这是你第"</span>+req.session.count+<span class="string">"来访"</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			req.session.user = <span class="string">"kiro"</span>;</span><br><span class="line">			res.session.count = <span class="number">1</span>;	//第几次访问</span><br><span class="line">			res.send(<span class="string">'first time'</span>);</span><br><span class="line">		&#125;		</span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="mongodb存储">mongodb存储</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/*app.js*/</span><br><span class="line">	var session = require(<span class="string">'Express-session'</span>);</span><br><span class="line">	//自定义mongo的连接，返回 mongoose.connect(<span class="string">'mongodb://'</span>+dbConfig.hostname+<span class="string">'/'</span>+dbConfig.database);</span><br><span class="line">	var mongoose = require(<span class="string">'./db'</span>);		</span><br><span class="line">	var MongoStore = require(<span class="string">'connect-mongo'</span>)(session);</span><br><span class="line">	......</span><br><span class="line">	app.use(session(&#123;</span><br><span class="line">		secret:<span class="string">'ilovekiro'</span>,</span><br><span class="line">		cookie:&#123;</span><br><span class="line">			maxAge:<span class="number">30</span>*<span class="number">1000</span>	//过期时间，一过期mongodb自动删除。</span><br><span class="line">		&#125;,</span><br><span class="line">		store: new MongoStore(&#123;</span><br><span class="line">			mongooseConnection: mongoose.connection</span><br><span class="line">		&#125;),</span><br><span class="line">		resave:<span class="literal">true</span>,</span><br><span class="line">		saveUninitialized: <span class="literal">true</span></span><br><span class="line">	&#125;));</span><br></pre></td></tr></table></figure>
+<p>查找mongodb中数据，有以下数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/* <span class="number">0</span> */</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : <span class="string">"RINlnX4M_VezPA2uaVVuKr1voHqvmAro"</span>,</span><br><span class="line">    <span class="string">"session"</span> : <span class="string">"&#123;\"cookie\":&#123;\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"&#125;,\"isvisit\":1&#125;"</span>,</span><br><span class="line">    <span class="string">"expires"</span> : ISODate(<span class="string">"2015-07-23T04:06:33.054Z"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* <span class="number">1</span> */</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : <span class="string">"SOqkAA9blNVH43yv6IpvS6HLYHWzIrCS"</span>,</span><br><span class="line">    <span class="string">"session"</span> : <span class="string">"&#123;\"cookie\":&#123;\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"&#125;,\"isvisit\":1&#125;"</span>,</span><br><span class="line">    <span class="string">"expires"</span> : ISODate(<span class="string">"2015-07-23T04:06:55.943Z"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>很好奇mongodb中如何进行定时删除操作的，查找了一下是通过创建<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.tests.createIndex(&#123;expires:<span class="number">1</span>&#125;,&#123;expireAfterSeconds:<span class="number">0</span>&#125;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="redis存储">redis存储</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/*app.js*/</span><br><span class="line">	var session = require(<span class="string">'Express-session'</span>);</span><br><span class="line">	var RedisStore = require(<span class="string">'connect-redis'</span>)(session);</span><br><span class="line">	......</span><br><span class="line">	app.use(session(&#123;</span><br><span class="line">		secret:<span class="string">'ilovekiro'</span>,</span><br><span class="line">		cookie:&#123;</span><br><span class="line">			maxAge:<span class="number">30</span>*<span class="number">1000</span>	//过期时间，一过期redis自动删除。</span><br><span class="line">		&#125;,</span><br><span class="line">		store: new RedisStore(&#123;</span><br><span class="line">			port: <span class="number">6379</span>,</span><br><span class="line">			host: <span class="string">'127.0.0.1'</span>,</span><br><span class="line">		&#125;),</span><br><span class="line">		resave:<span class="literal">true</span>,</span><br><span class="line">		saveUninitialized: <span class="literal">true</span></span><br><span class="line">	&#125;));</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kirochen.com/2015/07/09/about-cookie-session/" data-title="cookie和session在Express中应用 | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/07/08/git-useful-skills/"  title="Git 常用技能">
+ <strong>下一篇：</strong><br/> 
+ <span>Git 常用技能
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#cookie和session"><span class="toc-number">1.</span> <span class="toc-text">cookie和session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Express中的cookie"><span class="toc-number">2.</span> <span class="toc-text">Express中的cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Express中的session"><span class="toc-number">3.</span> <span class="toc-text">Express中的session</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存存储（默认）"><span class="toc-number">3.1.</span> <span class="toc-text">内存存储（默认）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mongodb存储"><span class="toc-number">3.2.</span> <span class="toc-text">mongodb存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis存储"><span class="toc-number">3.3.</span> <span class="toc-text">redis存储</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://cnodejs.org" target="_blank" title="Node.js 中文技术社区">Node.js社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weibo.com/u/1855126383" target="_blank" title="我的微博">我的微博</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/kiroChen" target="_blank" title="github">github</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Keep moving. <br/>
+			Never stop.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1855126383" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/kiroChen" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:330558685@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>© 2015 
+		
+		<a href="/about" target="_blank" title="Kiro">Kiro</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
