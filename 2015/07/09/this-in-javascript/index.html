@@ -23,7 +23,7 @@
 全局中的this1alert(this); //window
 全局范围内的this指向全局对象，浏览器中就是window。
 函数调用12345function test(x) &amp;#123;	this.x = x;		//这里的this指向全局&amp;#125;test(2);console.log(x);		//全局变量x">
-<meta property="og:updated_time" content="2015-07-09T11:05:49.721Z">
+<meta property="og:updated_time" content="2015-07-09T11:12:14.246Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Javascript中的this">
 <meta name="twitter:description" content="JavaScript 中的this 总是让人迷惑，应该是js 众所周知的坑之一。
@@ -99,7 +99,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全局中的this"><span class="toc-number">1.</span> <span class="toc-text">全局中的this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用"><span class="toc-number">2.</span> <span class="toc-text">函数调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为对象调用"><span class="toc-number">3.</span> <span class="toc-text">作为对象调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为构造函数"><span class="toc-number">4.</span> <span class="toc-text">作为构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内部函数"><span class="toc-number">5.</span> <span class="toc-text">内部函数</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全局中的this"><span class="toc-number">1.</span> <span class="toc-text">全局中的this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用"><span class="toc-number">2.</span> <span class="toc-text">函数调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为对象调用"><span class="toc-number">3.</span> <span class="toc-text">作为对象调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为构造函数"><span class="toc-number">4.</span> <span class="toc-text">作为构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内部函数"><span class="toc-number">5.</span> <span class="toc-text">内部函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单地总结"><span class="toc-number">6.</span> <span class="toc-text">简单地总结</span></a></li></ol>
 		
 		</div>
 		
@@ -114,6 +114,13 @@
 <p>函数内部的this 指向新创建的对象。</p>
 <h2 id="内部函数">内部函数</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var name = <span class="string">"out name"</span>;</span><br><span class="line">var person = &#123;</span><br><span class="line">	name: <span class="string">"inner name"</span>,</span><br><span class="line">	say: <span class="keyword">function</span>(sth) &#123;</span><br><span class="line">		var sayHello = <span class="keyword">function</span>(sth) &#123;</span><br><span class="line">			console.log(this.name + <span class="string">" says "</span>+sth);</span><br><span class="line">		&#125;</span><br><span class="line">		sayHello(sth);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person.say(<span class="string">"hello"</span>);</span><br></pre></td></tr></table></figure>
 <p>在内部函数中，this没有按预想的绑定到外层函数对象上，而是绑定到了全局对象。这里普遍被认为是JavaScript语言的设计错误，因为没有人想让内部函数中的this 指向全局对象。一般的处理方式是将this作为变量保存下来，一般约定为that 或者self：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var name = <span class="string">"out name"</span>;</span><br><span class="line">var person = &#123;</span><br><span class="line">	name: <span class="string">"inner name"</span>,</span><br><span class="line">	say: <span class="keyword">function</span>(sth) &#123;</span><br><span class="line">		var that = this;</span><br><span class="line">		var sayHello = <span class="keyword">function</span>(sth) &#123;</span><br><span class="line">			console.log(that.name + <span class="string">" says "</span>+sth);</span><br><span class="line">		&#125;</span><br><span class="line">		sayHello(sth);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person.say(<span class="string">"hello"</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="简单地总结">简单地总结</h2><p>简单地总结以上几点，可以发现，其实只有第六点是让人疑惑的。<br>其实就可以总结为以下几点：</p>
+<ul>
+<li>当函数作为对象的方法调用时，this 指向该对象。</li>
+<li>当函数作为淡出函数调用时，this 指向全局对象（严格模式时，为undefined）</li>
+<li>构造函数中的this 指向新创建的对象</li>
+<li>嵌套函数中的this 不会继承上层函数的this，如果需要，可以用一个变量保存上层函数的this。再总结的简单点，如果在函数中使用了this，只有在该函数直接被某对象调用时，该this才指向该对象。</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -158,7 +165,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全局中的this"><span class="toc-number">1.</span> <span class="toc-text">全局中的this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用"><span class="toc-number">2.</span> <span class="toc-text">函数调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为对象调用"><span class="toc-number">3.</span> <span class="toc-text">作为对象调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为构造函数"><span class="toc-number">4.</span> <span class="toc-text">作为构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内部函数"><span class="toc-number">5.</span> <span class="toc-text">内部函数</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全局中的this"><span class="toc-number">1.</span> <span class="toc-text">全局中的this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用"><span class="toc-number">2.</span> <span class="toc-text">函数调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为对象调用"><span class="toc-number">3.</span> <span class="toc-text">作为对象调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作为构造函数"><span class="toc-number">4.</span> <span class="toc-text">作为构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内部函数"><span class="toc-number">5.</span> <span class="toc-text">内部函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单地总结"><span class="toc-number">6.</span> <span class="toc-text">简单地总结</span></a></li></ol>
  
   </div>
 
