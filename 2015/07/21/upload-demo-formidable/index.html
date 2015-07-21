@@ -1,0 +1,412 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Node.js：文件上传简单demo | Kiro&#39;s BLOG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Kiro">
+    
+
+    
+    <meta name="description" content="上传文件是一个网站的基础，所以这次分享一个之前写的一个demo，给初学者参考，大神忽略吧。
+formidable简介在早期的Node.js，上传文件是一个相对复杂的操作，这是由于Node对Http的封装较低缘故，随后在一些开发者的贡献下，出现了formidable，connect-form等三方库。这类三方库的出现简化了文件上传。而connect-form自己没用过，不好评价和比较。这里就简要介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js：文件上传简单demo">
+<meta property="og:url" content="http://kirochen.com/2015/07/21/upload-demo-formidable/index.html">
+<meta property="og:site_name" content="Kiro's BLOG">
+<meta property="og:description" content="上传文件是一个网站的基础，所以这次分享一个之前写的一个demo，给初学者参考，大神忽略吧。
+formidable简介在早期的Node.js，上传文件是一个相对复杂的操作，这是由于Node对Http的封装较低缘故，随后在一些开发者的贡献下，出现了formidable，connect-form等三方库。这类三方库的出现简化了文件上传。而connect-form自己没用过，不好评价和比较。这里就简要介绍">
+<meta property="og:updated_time" content="2015-07-21T10:13:37.986Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js：文件上传简单demo">
+<meta name="twitter:description" content="上传文件是一个网站的基础，所以这次分享一个之前写的一个demo，给初学者参考，大神忽略吧。
+formidable简介在早期的Node.js，上传文件是一个相对复杂的操作，这是由于Node对Http的封装较低缘故，随后在一些开发者的贡献下，出现了formidable，connect-form等三方库。这类三方库的出现简化了文件上传。而connect-form自己没用过，不好评价和比较。这里就简要介绍">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
+    
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Kiro&#39;s BLOG">Kiro&#39;s BLOG</a></h1>
+				<h2 class="blog-motto">当你的才华还撑不起你的野心时，你就应该静下心来学习</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kirochen.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/21/upload-demo-formidable/" title="Node.js：文件上传简单demo" itemprop="url">Node.js：文件上传简单demo</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-21T09:19:00.000Z" itemprop="datePublished"> 发表于 2015-07-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#formidable简介"><span class="toc-number">1.</span> <span class="toc-text">formidable简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单实现上传文件的功能"><span class="toc-number">2.</span> <span class="toc-text">简单实现上传文件的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单封装"><span class="toc-number">3.</span> <span class="toc-text">简单封装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#返回的结果"><span class="toc-number">4.</span> <span class="toc-text">返回的结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
+		
+		</div>
+		
+		<p>上传文件是一个网站的基础，所以这次分享一个之前写的一个demo，给初学者参考，大神忽略吧。</p>
+<h3 id="formidable简介">formidable简介</h3><p>在早期的Node.js，上传文件是一个相对复杂的操作，这是由于Node对Http的封装较低缘故，随后在一些开发者的贡献下，出现了formidable，connect-form等三方库。这类三方库的出现简化了文件上传。而connect-form自己没用过，不好评价和比较。这里就简要介绍下formidable。<br>formidable优点：上传速度比较可观，占用内存也比较低，简单易用<br>使用formidable肯定要先安装咯<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install formidable</span><br></pre></td></tr></table></figure></p>
+<h3 id="简单实现上传文件的功能">简单实现上传文件的功能</h3><p>在页面前端<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//jade</span><br><span class="line">form(role=<span class="string">"form"</span>, method=<span class="string">"post"</span>, enctype=<span class="string">'multipart/form-data'</span>, action=<span class="string">"/upload"</span>)</span><br><span class="line">	input(<span class="built_in">type</span>=<span class="string">"text"</span>, name=<span class="string">"name"</span>)</span><br><span class="line">	input(<span class="built_in">type</span>=<span class="string">"file"</span>, name=<span class="string">"file"</span> id=<span class="string">"file"</span>)</span><br><span class="line">	button(id=<span class="string">"submit"</span>, <span class="built_in">type</span>=<span class="string">"submit"</span>) upload</span><br></pre></td></tr></table></figure></p>
+<p>后端Node代码<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">var express = require(<span class="string">'express'</span>);</span><br><span class="line">var router = express.Router();</span><br><span class="line">var formidable = require(<span class="string">'formidable'</span>);</span><br><span class="line">var uuid = require(<span class="string">'node-uuid'</span>);</span><br><span class="line">var fs = require(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line">router.post(<span class="string">'/upload'</span>, <span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">	//创建上传表单</span><br><span class="line">	var form = new formidable.IncomingForm();</span><br><span class="line">	//设置编辑</span><br><span class="line">	form.encoding = <span class="string">'utf-8'</span>;</span><br><span class="line">	//设置上传目录</span><br><span class="line">	form.uploadDir = <span class="string">'public/upload/'</span>;</span><br><span class="line">	form.keepExtensions = <span class="literal">true</span>;</span><br><span class="line">	//文件大小</span><br><span class="line">	form.maxFieldsSize = <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	form.parse(req, <span class="keyword">function</span> (err, fields, files) &#123;</span><br><span class="line">		<span class="keyword">if</span>(err) &#123;</span><br><span class="line">			res.send(err);</span><br><span class="line">			<span class="built_in">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		console.log(fields);</span><br><span class="line">		var extName = /\.[^\.]+/.exec(files.file.name);</span><br><span class="line">		var ext = Array.isArray(extName)</span><br><span class="line">			? extName[<span class="number">0</span>]</span><br><span class="line">			: <span class="string">''</span>;</span><br><span class="line">		//重命名，以防文件重复</span><br><span class="line">		var avatarName = uuid() + ext;</span><br><span class="line">		//移动的文件目录</span><br><span class="line">		var newPath = form.uploadDir + avatarName;</span><br><span class="line">		fs.renameSync(files.file.path, newPath);</span><br><span class="line">		res.send(<span class="string">'success'</span>);</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="简单封装">简单封装</h3><p>实现将传入的form-data数据自动将其文件上传，并返回相关的信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">form(role=<span class="string">"form"</span>, method=<span class="string">"post"</span>, enctype=<span class="string">'multipart/form-data'</span>, action=<span class="string">"/upload"</span>)</span><br><span class="line">	input(<span class="built_in">type</span>=<span class="string">"text"</span>, name=<span class="string">"name"</span>)</span><br><span class="line">	input(<span class="built_in">type</span>=<span class="string">"file"</span>, name=<span class="string">"file"</span> id=<span class="string">"file"</span>)</span><br><span class="line">	input(<span class="built_in">type</span>=<span class="string">"file"</span>, name=<span class="string">"file2"</span> id=<span class="string">"file2"</span>)</span><br><span class="line">	button(id=<span class="string">"submit"</span>, <span class="built_in">type</span>=<span class="string">"submit"</span>) upload</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">//multi_upload.js</span><br><span class="line">var formidable = require(<span class="string">'formidable'</span>);</span><br><span class="line">var uuid = require(<span class="string">'node-uuid'</span>);</span><br><span class="line">var fs = require(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line">module.exports = <span class="keyword">function</span> (req, options, next) &#123;</span><br><span class="line">	<span class="keyword">if</span>(typeof options === <span class="string">'function'</span>)&#123;</span><br><span class="line">		next = options;</span><br><span class="line">		options = &#123;&#125;;</span><br><span class="line">	&#125;</span><br><span class="line">	//创建上传表单</span><br><span class="line">	var form = new formidable.IncomingForm();</span><br><span class="line">	//设置编辑</span><br><span class="line">	form.encoding = options.encoding || <span class="string">'utf-8'</span>;</span><br><span class="line">	//设置上传目录</span><br><span class="line">	form.uploadDir = options.uploadDir || <span class="string">'./public/upload/'</span>;</span><br><span class="line">	//文件大小</span><br><span class="line">	form.maxFieldsSize = options.maxFieldsSize || <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	//解析</span><br><span class="line">	form.parse(req, <span class="keyword">function</span> (err, fields, files) &#123;</span><br><span class="line">		<span class="keyword">if</span>(err) <span class="built_in">return</span> next(err);</span><br><span class="line">		<span class="keyword">for</span> (x <span class="keyword">in</span> files) &#123;</span><br><span class="line">			//后缀名</span><br><span class="line">			var extName = /\.[^\.]+/.exec(files[x].name);</span><br><span class="line">			var ext = Array.isArray(extName)</span><br><span class="line">				? extName[<span class="number">0</span>]</span><br><span class="line">				: <span class="string">''</span>;</span><br><span class="line">			//重命名，以防文件重复</span><br><span class="line">			var avatarName = uuid() + ext;</span><br><span class="line">			//移动的文件目录</span><br><span class="line">			var newPath = form.uploadDir + avatarName;</span><br><span class="line">			fs.renameSync(files[x].path, newPath);</span><br><span class="line">			fields[x] = &#123;</span><br><span class="line">				size: files[x].size,</span><br><span class="line">				path: newPath,</span><br><span class="line">				name: files[x].name,</span><br><span class="line">				<span class="built_in">type</span>: files[x].type,</span><br><span class="line">				extName: ext</span><br><span class="line">			&#125;;</span><br><span class="line">		&#125;</span><br><span class="line">		next(null, fields);</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//route</span><br><span class="line">router.post(<span class="string">'/upload'</span>, <span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">	node_upload(req,<span class="keyword">function</span> (err, fields) &#123;</span><br><span class="line">		console.log(err);</span><br><span class="line">		res.json(fields);</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="返回的结果">返回的结果</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//这是在浏览器上的</span><br><span class="line">&#123;</span><br><span class="line">	name: <span class="string">"sss"</span>,</span><br><span class="line">	file: &#123;</span><br><span class="line">		size: <span class="number">775702</span>,</span><br><span class="line">		path: <span class="string">"./public/upload/04ec5a72-867a-4075-9926-f2ea5ff55544.jpg"</span>,</span><br><span class="line">		name: <span class="string">"Jellyfish.jpg"</span>,</span><br><span class="line">		<span class="built_in">type</span>: <span class="string">"image/jpeg"</span>,</span><br><span class="line">		extName: <span class="string">".jpg"</span></span><br><span class="line">	&#125;,</span><br><span class="line">	file2: &#123;</span><br><span class="line">		size: <span class="number">1411</span>,</span><br><span class="line">		path: <span class="string">"./public/upload/7429b7b8-feca-44d1-9039-6446920e46a2.gif"</span>,</span><br><span class="line">		name: <span class="string">"QQ截图20150721143806.gif"</span>,</span><br><span class="line">		<span class="built_in">type</span>: <span class="string">"image/gif"</span>,</span><br><span class="line">		extName: <span class="string">".gif"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="后续">后续</h3><ul>
+<li>实现上传文件并在前端显示进度条</li>
+<li>实现拖拽上传（前端）</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kirochen.com/2015/07/21/upload-demo-formidable/" data-title="Node.js：文件上传简单demo | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/07/16/nodemailer-send-email/"  title="Node.js：使用nodemailer发送邮件">
+ <strong>下一篇：</strong><br/> 
+ <span>Node.js：使用nodemailer发送邮件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#formidable简介"><span class="toc-number">1.</span> <span class="toc-text">formidable简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单实现上传文件的功能"><span class="toc-number">2.</span> <span class="toc-text">简单实现上传文件的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单封装"><span class="toc-number">3.</span> <span class="toc-text">简单封装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#返回的结果"><span class="toc-number">4.</span> <span class="toc-text">返回的结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://cnodejs.org" target="_blank" title="Node.js 中文技术社区">Node.js社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weibo.com/u/1855126383" target="_blank" title="我的微博">我的微博</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/kiroChen" target="_blank" title="github">github</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Keep moving. <br/>
+			Never stop.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1855126383" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/kiroChen" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:330558685@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>© 2015 
+		
+		<a href="/about" target="_blank" title="Kiro">Kiro</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
