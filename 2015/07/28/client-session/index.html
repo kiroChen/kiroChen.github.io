@@ -4,29 +4,32 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Node.js：node_ccap生成验证码 | Kiro&#39;s BLOG</title>
+    <title>Node.js：客户端session | Kiro&#39;s BLOG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Kiro">
     
 
     
-    <meta name="description" content="安装1$ npm install ccap
-前端12//jade页面img#capShow(src=&quot;/getCap/0.1&quot;,onclick=&quot;javascript:this.src=&apos;/getCap/&apos;+Math.random()&quot; alt=&quot;验证码&quot;)
-后端12345678var ccap = require(&apos;ccap&apos;)();	router.get(&apos;/getCap/:id&apos;, func">
+    <meta name="description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+
+session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
+session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Node.js：node_ccap生成验证码">
-<meta property="og:url" content="http://kirochen.com/2015/07/23/about-node-ccap/index.html">
+<meta property="og:title" content="Node.js：客户端session">
+<meta property="og:url" content="http://kirochen.com/2015/07/28/client-session/index.html">
 <meta property="og:site_name" content="Kiro's BLOG">
-<meta property="og:description" content="安装1$ npm install ccap
-前端12//jade页面img#capShow(src=&quot;/getCap/0.1&quot;,onclick=&quot;javascript:this.src=&apos;/getCap/&apos;+Math.random()&quot; alt=&quot;验证码&quot;)
-后端12345678var ccap = require(&apos;ccap&apos;)();	router.get(&apos;/getCap/:id&apos;, func">
-<meta property="og:updated_time" content="2015-07-23T03:41:08.920Z">
+<meta property="og:description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+
+session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
+session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
+<meta property="og:updated_time" content="2015-07-28T08:35:04.140Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Node.js：node_ccap生成验证码">
-<meta name="twitter:description" content="安装1$ npm install ccap
-前端12//jade页面img#capShow(src=&quot;/getCap/0.1&quot;,onclick=&quot;javascript:this.src=&apos;/getCap/&apos;+Math.random()&quot; alt=&quot;验证码&quot;)
-后端12345678var ccap = require(&apos;ccap&apos;)();	router.get(&apos;/getCap/:id&apos;, func">
+<meta name="twitter:title" content="Node.js：客户端session">
+<meta name="twitter:description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+
+session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
+session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
 
     
     <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
@@ -80,14 +83,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/23/about-node-ccap/" title="Node.js：node_ccap生成验证码" itemprop="url">Node.js：node_ccap生成验证码</a>
+      <a href="/2015/07/28/client-session/" title="Node.js：客户端session" itemprop="url">Node.js：客户端session</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-23T03:37:39.000Z" itemprop="datePublished"> 发表于 2015-07-23</time>
+    <time datetime="2015-07-28T07:34:17.000Z" itemprop="datePublished"> 发表于 2015-07-28</time>
     
   </p>
 </header>
@@ -96,13 +99,35 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前端"><span class="toc-number">2.</span> <span class="toc-text">前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后端"><span class="toc-number">3.</span> <span class="toc-text">后端</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie-session"><span class="toc-number">2.</span> <span class="toc-text">cookie-session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回放攻击"><span class="toc-number">3.</span> <span class="toc-text">回放攻击</span></a></li></ol>
 		
 		</div>
 		
-		<h3 id="安装">安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install ccap</span><br></pre></td></tr></table></figure>
-<h3 id="前端">前端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//jade页面</span><br><span class="line">img<span class="comment">#capShow(src="/getCap/0.1",onclick="javascript:this.src='/getCap/'+Math.random()" alt="验证码")</span></span><br></pre></td></tr></table></figure>
-<h3 id="后端">后端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var ccap = require(<span class="string">'ccap'</span>)();	</span><br><span class="line">router.get(<span class="string">'/getCap/:id'</span>, <span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">	var ary = ccap.get();</span><br><span class="line">	var txt = ary[<span class="number">0</span>];</span><br><span class="line">	var buf = ary[<span class="number">1</span>];</span><br><span class="line">	res.send(buf);</span><br><span class="line">	console.log(txt);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>  
+		<h3 id="前言">前言</h3><p>其实刚开始接触<code>客户端session</code>的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。<br>回顾一下之前写的一篇关于<a href="/2015/07/09/about-cookie-session/">cookie和session的博客</a>。简单总结一下就是：</p>
+<ul>
+<li><code>session</code>主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。</li>
+<li><code>session</code>是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（<code>mongodb</code>和<code>redis</code>）。</li>
+<li>客户端浏览器<code>cookie</code>保存<code>sessionid</code>，服务端通过客户端每次http请求带上的cookie中的sessionid找到相应的用户的session内容。</li>
+</ul>
+<p>但是最近看到cnode上的一篇<a href="https://cnodejs.org/topic/53971784a087f45620ea988a" target="_blank" rel="external">精华博文</a>和<a href="https://github.com/alsotang/node-lessons/tree/master/lesson16" target="_blank" rel="external">alsotang的博文</a>，触发自己的一点点思考。可以将session完全保留在客户端浏览器中（当然是经过加密的啦）。</p>
+<p>可能很多人的第一反应是，session的内容保存在客户端cookie中，那如何保证它的安全性。</p>
+<p>结合博文，简单说说自己的看后感，</p>
+<ul>
+<li>1、大多数情况下，session保存的是用户状态和少量的用户信息。例如用户id，用户姓名，用户头像。而且这本身就是给当前用户看的，所以说对本用户而言session中的数据不敏感，个人感觉如果仅仅是记录状态，可以只保存userid。</li>
+<li>2、可利用服务器上的一个秘钥对数据进行加密，而这秘钥肯定是只有开发者知道。</li>
+<li>3、cookie的容量是有限的，不可能像服务端session那样去存放大量的数据，不过对于用户状态的记录而言，一个userid足以，用户信息等的获取可以通过获取数据库来查找。</li>
+</ul>
+<p>所以在开发一些对session保存量不大（实在想不出有什么需求会将很多的数据放在session上！请反驳我），并发量比较大的情况下可以试一下用客户端session，至少可以省下一部redis服务器。</p>
+<h3 id="cookie-session">cookie-session</h3><p>你猜对了，可以用这个来实现<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//git url https://github.com/expressjs/cookie-session</span><br><span class="line">$ npm install cookie-session</span><br></pre></td></tr></table></figure></p>
+<p>说来奇葩，之前做过一个项目是用<code>cookie-session</code>来实现以上的功能的，但是由于是接手的，而本身还有开发任务，并没有做仔细研读，只是在基础上做扩展或改动。因此贴上这个项目的代码。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//app.js</span><br><span class="line">var session = require(<span class="string">'cookie-session'</span>);</span><br><span class="line">//config.js配置了key和secret</span><br><span class="line">var config = require(<span class="string">'./config'</span>);</span><br><span class="line"></span><br><span class="line">app.use(session(&#123;</span><br><span class="line">    key: config.key,</span><br><span class="line">    secret: config.secret,</span><br><span class="line">    cookie:&#123; domain: config.domain &#125;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+<h3 id="回放攻击">回放攻击</h3><p><a href="https://cnodejs.org/user/alsotang" target="_blank" rel="external">alsotang</a>说过这样一段话：</p>
+<p>不过 cookie-session 我个人建议不要使用，有受到回放攻击的危险。</p>
+<p>回放攻击指的是，比如一个用户，它现在有 100 积分，积分存在 session 中，session 保存在 cookie 中。他先复制下现在的这段 cookie，然后去发个帖子，扣掉了 20 积分，于是他就只有 80 积分了。而他现在可以将之前复制下的那段 cookie 再粘贴回去浏览器中，于是服务器在一些场景下会认为他又有了 100 积分。</p>
+<p>如果避免这种攻击呢？这就需要引入一个第三方的手段来验证 cookie session，而验证所需的信息，一定不能存在 cookie 中。这么一来，避免了这种攻击后，使用 cookie session 的好处就荡然无存了。如果为了避免攻击而引入了缓存使用的话，那不如把 cookie session 也一起放进缓存中。</p>
+<p>我简单的理解成了不要将敏感数据放在client-session中。解决。</p>
+<p>ps:可以看看<a href="https://cnodejs.org/topic/5212d82d0a746c580b43d948" target="_blank" rel="external">https://cnodejs.org/topic/5212d82d0a746c580b43d948</a></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -114,7 +139,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://kirochen.com/2015/07/23/about-node-ccap/" data-title="Node.js：node_ccap生成验证码 | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  <div data-url="http://kirochen.com/2015/07/28/client-session/" data-title="Node.js：客户端session | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -127,19 +152,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/07/28/client-session/" title="Node.js：客户端session">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Node.js：客户端session</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/07/22/timed-task-by-cron/"  title="Node.js：定时任务爬取数据">
+<a href="/2015/07/23/about-node-ccap/"  title="Node.js：node_ccap生成验证码">
  <strong>下一篇：</strong><br/> 
- <span>Node.js：定时任务爬取数据
+ <span>Node.js：node_ccap生成验证码
 </span>
 </a>
 </div>
@@ -154,7 +171,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前端"><span class="toc-number">2.</span> <span class="toc-text">前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后端"><span class="toc-number">3.</span> <span class="toc-text">后端</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie-session"><span class="toc-number">2.</span> <span class="toc-text">cookie-session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回放攻击"><span class="toc-number">3.</span> <span class="toc-text">回放攻击</span></a></li></ol>
  
   </div>
 
