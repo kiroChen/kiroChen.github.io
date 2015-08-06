@@ -4,32 +4,38 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Node.js：客户端session（补充） | Kiro&#39;s BLOG</title>
+    <title>转自alsotang | Kiro&#39;s BLOG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Kiro">
     
 
     
-    <meta name="description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+    <meta name="description" content="参考信息：
 
-session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
-session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
+CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
+CDN技术详解 http://book.2cto.com/201207/327.html
+Nginx开发从入门到精通 http://tengine.taobao.org/book/
+nginx 线程池原文: https://www.nginx.com/blog/th">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Node.js：客户端session（补充）">
-<meta property="og:url" content="http://kirochen.com/2015/07/28/client-session/index.html">
+<meta property="og:title" content="转自alsotang">
+<meta property="og:url" content="http://kirochen.com/2015/08/06/books-20150806/index.html">
 <meta property="og:site_name" content="Kiro's BLOG">
-<meta property="og:description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+<meta property="og:description" content="参考信息：
 
-session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
-session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
-<meta property="og:updated_time" content="2015-07-28T08:38:35.595Z">
+CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
+CDN技术详解 http://book.2cto.com/201207/327.html
+Nginx开发从入门到精通 http://tengine.taobao.org/book/
+nginx 线程池原文: https://www.nginx.com/blog/th">
+<meta property="og:updated_time" content="2015-08-06T10:06:08.110Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Node.js：客户端session（补充）">
-<meta name="twitter:description" content="前言其实刚开始接触客户端session的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。回顾一下之前写的一篇关于cookie和session的博客。简单总结一下就是：
+<meta name="twitter:title" content="转自alsotang">
+<meta name="twitter:description" content="参考信息：
 
-session主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。
-session是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（mongodb和redis）。">
+CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
+CDN技术详解 http://book.2cto.com/201207/327.html
+Nginx开发从入门到精通 http://tengine.taobao.org/book/
+nginx 线程池原文: https://www.nginx.com/blog/th">
 
     
     <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
@@ -83,14 +89,14 @@ session是存储在服务端的，而服务端的存储方式也是多样的。�
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/28/client-session/" title="Node.js：客户端session（补充）" itemprop="url">Node.js：客户端session（补充）</a>
+      <a href="/2015/08/06/books-20150806/" title="转自alsotang" itemprop="url">转自alsotang</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-28T07:34:17.000Z" itemprop="datePublished"> 发表于 2015-07-28</time>
+    <time datetime="2015-08-06T09:58:37.000Z" itemprop="datePublished"> 发表于 2015-08-06</time>
     
   </p>
 </header>
@@ -99,34 +105,33 @@ session是存储在服务端的，而服务端的存储方式也是多样的。�
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie-session"><span class="toc-number">2.</span> <span class="toc-text">cookie-session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回放攻击"><span class="toc-number">3.</span> <span class="toc-text">回放攻击</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h3 id="前言">前言</h3><p>其实刚开始接触<code>客户端session</code>的时候，感觉是有点奇怪的也挺有意思的，与之前对session的理解有点不太一样。<br>回顾一下之前写的一篇关于<a href="/2015/07/09/about-cookie-session/">cookie和session的博客</a>。简单总结一下就是：</p>
-<ul>
-<li><code>session</code>主要的作用是补充http无状态特性，用来记录用户状态，表面用户身份。</li>
-<li><code>session</code>是存储在服务端的，而服务端的存储方式也是多样的。有内存存储，数据库存储（<code>mongodb</code>和<code>redis</code>）。</li>
-<li>客户端浏览器<code>cookie</code>保存<code>sessionid</code>，服务端通过客户端每次http请求带上的cookie中的sessionid找到相应的用户的session内容。</li>
-</ul>
-<p>但是最近看到cnode上的一篇<a href="https://cnodejs.org/topic/53971784a087f45620ea988a" target="_blank" rel="external">精华博文</a>和<a href="https://github.com/alsotang/node-lessons/tree/master/lesson16" target="_blank" rel="external">alsotang的博文</a>，触发自己的一点点思考。可以将session完全保留在客户端浏览器中（当然是经过加密的啦）。</p>
-<p>可能很多人的第一反应是，session的内容保存在客户端cookie中，那如何保证它的安全性。</p>
-<p>结合博文，简单说说自己的看后感，</p>
-<ul>
-<li>1、大多数情况下，session保存的是用户状态和少量的用户信息。例如用户id，用户姓名，用户头像。而且这本身就是给当前用户看的，所以说对本用户而言session中的数据不敏感，个人感觉如果仅仅是记录状态，可以只保存userid。</li>
-<li>2、可利用服务器上的一个秘钥对数据进行加密，而这秘钥肯定是只有开发者知道。</li>
-<li>3、cookie的容量是有限的，不可能像服务端session那样去存放大量的数据，不过对于用户状态的记录而言，一个userid足以，用户信息等的获取可以通过获取数据库来查找。</li>
-</ul>
-<p>所以在开发一些对session保存量不大（实在想不出有什么需求会将很多的数据放在session上！请反驳我），并发量比较大的情况下可以试一下用客户端session，至少可以省下一部redis服务器。</p>
-<h3 id="cookie-session">cookie-session</h3><p>你猜对了，可以用这个来实现<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//git url https://github.com/expressjs/cookie-session</span><br><span class="line">$ npm install cookie-session</span><br></pre></td></tr></table></figure></p>
-<p>说来奇葩，之前做过一个项目是用<code>cookie-session</code>来实现以上的功能的，但是由于是接手的，而本身还有开发任务，并没有做仔细研读，只是在基础上做扩展或改动。因此贴上这个项目的代码。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//app.js</span><br><span class="line">var session = require(<span class="string">'cookie-session'</span>);</span><br><span class="line">//config.js配置了key和secret</span><br><span class="line">var config = require(<span class="string">'./config'</span>);</span><br><span class="line"></span><br><span class="line">app.use(session(&#123;</span><br><span class="line">    key: config.key,</span><br><span class="line">    secret: config.secret,</span><br><span class="line">    cookie:&#123; domain: config.domain &#125;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
-<h3 id="回放攻击">回放攻击</h3><p><a href="https://cnodejs.org/user/alsotang" target="_blank" rel="external">alsotang</a>说过这样一段话：</p>
-<p>不过 cookie-session 我个人建议不要使用，有受到回放攻击的危险。</p>
-<p>回放攻击指的是，比如一个用户，它现在有 100 积分，积分存在 session 中，session 保存在 cookie 中。他先复制下现在的这段 cookie，然后去发个帖子，扣掉了 20 积分，于是他就只有 80 积分了。而他现在可以将之前复制下的那段 cookie 再粘贴回去浏览器中，于是服务器在一些场景下会认为他又有了 100 积分。</p>
-<p>如果避免这种攻击呢？这就需要引入一个第三方的手段来验证 cookie session，而验证所需的信息，一定不能存在 cookie 中。这么一来，避免了这种攻击后，使用 cookie session 的好处就荡然无存了。如果为了避免攻击而引入了缓存使用的话，那不如把 cookie session 也一起放进缓存中。</p>
-<p>我简单的理解成了不要将敏感数据放在client-session中。解决。</p>
-<p>ps:可以看看<a href="https://cnodejs.org/topic/5212d82d0a746c580b43d948" target="_blank" rel="external">https://cnodejs.org/topic/5212d82d0a746c580b43d948</a></p>
+		<p>参考信息：</p>
+<ol>
+<li>CDN内容分发网络架构与四大关键技术 <a href="http://www.idcquan.com/CDN/720016_2.html" target="_blank" rel="external">http://www.idcquan.com/CDN/720016_2.html</a></li>
+<li>CDN技术详解 <a href="http://book.2cto.com/201207/327.html" target="_blank" rel="external">http://book.2cto.com/201207/327.html</a></li>
+<li>Nginx开发从入门到精通 <a href="http://tengine.taobao.org/book/" target="_blank" rel="external">http://tengine.taobao.org/book/</a></li>
+<li>nginx 线程池原文: <a href="https://www.nginx.com/blog/thread-pools-boost-performance-9x/" target="_blank" rel="external">https://www.nginx.com/blog/thread-pools-boost-performance-9x/</a><br>nginx 线程池翻译: <a href="http://www.infoq.com/cn/articles/thread-pools-boost-performance-9x" target="_blank" rel="external">http://www.infoq.com/cn/articles/thread-pools-boost-performance-9x</a></li>
+<li>浅析我国互联网骨干网网间结算问题 <a href="http://blog.chinaunix.net/uid-20486655-id-261838.html" target="_blank" rel="external">http://blog.chinaunix.net/uid-20486655-id-261838.html</a></li>
+<li>nginx API 网关介绍: <a href="https://www.nginx.com/solutions/api-gateway/" target="_blank" rel="external">https://www.nginx.com/solutions/api-gateway/</a></li>
+<li>nginx 微服务架构: <a href="https://www.nginx.com/blog/introduction-to-microservices/" target="_blank" rel="external">https://www.nginx.com/blog/introduction-to-microservices/</a></li>
+<li>dns 劫持/http 劫持: <a href="http://bbs.kafan.cn/thread-1825061-1-1.html" target="_blank" rel="external">http://bbs.kafan.cn/thread-1825061-1-1.html</a></li>
+<li>CDN缓存那些事 <a href="http://bbs.qcloud.com/forum.php?mod=viewthread&amp;tid=3775" target="_blank" rel="external">http://bbs.qcloud.com/forum.php?mod=viewthread&amp;tid=3775</a></li>
+<li>全局精确流量调度新思路-HttpDNS服务详解 <a href="http://blog.csdn.net/zhaqiwen/article/details/42024045" target="_blank" rel="external">http://blog.csdn.net/zhaqiwen/article/details/42024045</a></li>
+<li>百度曾经开源的 cdn 缓存工具OliveHC(国内已经关闭):<a href="https://github.com/Jacky-Li/olivehc" target="_blank" rel="external">https://github.com/Jacky-Li/olivehc</a></li>
+<li>浅谈网站防盗链技术 <a href="http://bbs.csdn.net/topics/110042791" target="_blank" rel="external">http://bbs.csdn.net/topics/110042791</a></li>
+<li>Nginx防盗链详细解说 <a href="http://blog.csdn.net/yuwenruli/article/details/8541952" target="_blank" rel="external">http://blog.csdn.net/yuwenruli/article/details/8541952</a></li>
+<li>随机 url 等相关信息: <a href="http://stackoverflow.com/questions/29674755/a-single-regex-for-all-location-paths-regardless-of-the-name-in-nginx" target="_blank" rel="external">http://stackoverflow.com/questions/29674755/a-single-regex-for-all-location-paths-regardless-of-the-name-in-nginx</a><br><a href="http://stackoverflow.com/questions/367786/prevent-caching-of-ajax-call" target="_blank" rel="external">http://stackoverflow.com/questions/367786/prevent-caching-of-ajax-call</a><br><a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images</a></li>
+<li>探密诡异的HTTP Referer总是为空的原因 <a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://www.cnblogs.com/dreamstudio/archive/2009/04/01/1427202.html</a></li>
+<li>P2P内网穿透原理 <a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://bbs.cnhonker.com/forum.php?mod=viewthread&amp;tid=7479</a></li>
+<li>P2P之UDP穿透NAT的原理与实现 [转]  <a href="http://blog.csdn.net/lsaturn/article/details/29262" target="_blank" rel="external">http://blog.csdn.net/lsaturn/article/details/29262</a></li>
+<li>从ip138网站爬取ip所处地点 <a href="http://blog.csdn.net/jthink_/article/details/28597757" target="_blank" rel="external">http://blog.csdn.net/jthink_/article/details/28597757</a></li>
+<li>Nginx做前端Proxy时TIME_WAIT过多的问题 <a href="http://www.cnblogs.com/qleelulu/p/3601499.html" target="_blank" rel="external">http://www.cnblogs.com/qleelulu/p/3601499.html</a></li>
+<li>UDP穿透NAT的原理与实现（UDP“打洞”原理）<a href="http://www.cnblogs.com/qleelulu/p/3601499.html" target="_blank" rel="external">http://blog.csdn.net/overmaker/article/details/3201799</a></li>
+</ol>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -139,7 +144,7 @@ session是存储在服务端的，而服务端的存储方式也是多样的。�
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://kirochen.com/2015/07/28/client-session/" data-title="Node.js：客户端session（补充） | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  <div data-url="http://kirochen.com/2015/08/06/books-20150806/" data-title="转自alsotang | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -152,19 +157,11 @@ session是存储在服务端的，而服务端的存储方式也是多样的。�
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/08/06/books-20150806/" title="转自alsotang">
-  <strong>上一篇：</strong><br/>
-  <span>
-  转自alsotang</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/07/23/about-node-ccap/"  title="Node.js：node_ccap生成验证码">
+<a href="/2015/07/28/client-session/"  title="Node.js：客户端session（补充）">
  <strong>下一篇：</strong><br/> 
- <span>Node.js：node_ccap生成验证码
+ <span>Node.js：客户端session（补充）
 </span>
 </a>
 </div>
@@ -179,7 +176,7 @@ session是存储在服务端的，而服务端的存储方式也是多样的。�
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie-session"><span class="toc-number">2.</span> <span class="toc-text">cookie-session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回放攻击"><span class="toc-number">3.</span> <span class="toc-text">回放攻击</span></a></li></ol>
+ 
  
   </div>
 
