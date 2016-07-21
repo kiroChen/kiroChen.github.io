@@ -4,38 +4,45 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>转自alsotang | Kiro&#39;s BLOG</title>
+    <title>分享：14年写的一个socketio聊天室，纯练手用 | Kiro&#39;s BLOG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Kiro">
     
 
     
-    <meta name="description" content="参考信息：
+    <meta name="description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
+功能
+群聊
+单聊
+发送图片
+发送表情
 
-CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
-CDN技术详解 http://book.2cto.com/201207/327.html
-Nginx开发从入门到精通 http://tengine.taobao.org/book/
-nginx 线程池原文: https://www.nginx.com/blog/th">
+运行12345git clone gi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="转自alsotang">
-<meta property="og:url" content="http://kirochen.com/2015/08/06/books-20150806/index.html">
+<meta property="og:title" content="分享：14年写的一个socketio聊天室，纯练手用">
+<meta property="og:url" content="http://kirochen.com/2015/07/21/node-chat/index.html">
 <meta property="og:site_name" content="Kiro's BLOG">
-<meta property="og:description" content="参考信息：
+<meta property="og:description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
+功能
+群聊
+单聊
+发送图片
+发送表情
 
-CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
-CDN技术详解 http://book.2cto.com/201207/327.html
-Nginx开发从入门到精通 http://tengine.taobao.org/book/
-nginx 线程池原文: https://www.nginx.com/blog/th">
-<meta property="og:updated_time" content="2015-08-06T10:06:08.110Z">
+运行12345git clone gi">
+<meta property="og:image" content="https://github.com/kiroChen/node_chat/raw/master/public/images/ui.jpg">
+<meta property="og:updated_time" content="2016-07-21T02:10:47.622Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="转自alsotang">
-<meta name="twitter:description" content="参考信息：
+<meta name="twitter:title" content="分享：14年写的一个socketio聊天室，纯练手用">
+<meta name="twitter:description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
+功能
+群聊
+单聊
+发送图片
+发送表情
 
-CDN内容分发网络架构与四大关键技术 http://www.idcquan.com/CDN/720016_2.html
-CDN技术详解 http://book.2cto.com/201207/327.html
-Nginx开发从入门到精通 http://tengine.taobao.org/book/
-nginx 线程池原文: https://www.nginx.com/blog/th">
+运行12345git clone gi">
 
     
     <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
@@ -89,14 +96,14 @@ nginx 线程池原文: https://www.nginx.com/blog/th">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/06/books-20150806/" title="转自alsotang" itemprop="url">转自alsotang</a>
+      <a href="/2015/07/21/node-chat/" title="分享：14年写的一个socketio聊天室，纯练手用" itemprop="url">分享：14年写的一个socketio聊天室，纯练手用</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-06T09:58:37.000Z" itemprop="datePublished"> 发表于 2015-08-06</time>
+    <time datetime="2015-07-21T01:50:00.000Z" itemprop="datePublished"> 发表于 2015-07-21</time>
     
   </p>
 </header>
@@ -105,33 +112,20 @@ nginx 线程池原文: https://www.nginx.com/blog/th">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">3.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">4.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">5.</span> <span class="toc-text">问题</span></a></li></ol>
 		
 		</div>
 		
-		<p>参考信息：</p>
-<ol>
-<li>CDN内容分发网络架构与四大关键技术 <a href="http://www.idcquan.com/CDN/720016_2.html" target="_blank" rel="external">http://www.idcquan.com/CDN/720016_2.html</a></li>
-<li>CDN技术详解 <a href="http://book.2cto.com/201207/327.html" target="_blank" rel="external">http://book.2cto.com/201207/327.html</a></li>
-<li>Nginx开发从入门到精通 <a href="http://tengine.taobao.org/book/" target="_blank" rel="external">http://tengine.taobao.org/book/</a></li>
-<li>nginx 线程池原文: <a href="https://www.nginx.com/blog/thread-pools-boost-performance-9x/" target="_blank" rel="external">https://www.nginx.com/blog/thread-pools-boost-performance-9x/</a><br>nginx 线程池翻译: <a href="http://www.infoq.com/cn/articles/thread-pools-boost-performance-9x" target="_blank" rel="external">http://www.infoq.com/cn/articles/thread-pools-boost-performance-9x</a></li>
-<li>浅析我国互联网骨干网网间结算问题 <a href="http://blog.chinaunix.net/uid-20486655-id-261838.html" target="_blank" rel="external">http://blog.chinaunix.net/uid-20486655-id-261838.html</a></li>
-<li>nginx API 网关介绍: <a href="https://www.nginx.com/solutions/api-gateway/" target="_blank" rel="external">https://www.nginx.com/solutions/api-gateway/</a></li>
-<li>nginx 微服务架构: <a href="https://www.nginx.com/blog/introduction-to-microservices/" target="_blank" rel="external">https://www.nginx.com/blog/introduction-to-microservices/</a></li>
-<li>dns 劫持/http 劫持: <a href="http://bbs.kafan.cn/thread-1825061-1-1.html" target="_blank" rel="external">http://bbs.kafan.cn/thread-1825061-1-1.html</a></li>
-<li>CDN缓存那些事 <a href="http://bbs.qcloud.com/forum.php?mod=viewthread&amp;tid=3775" target="_blank" rel="external">http://bbs.qcloud.com/forum.php?mod=viewthread&amp;tid=3775</a></li>
-<li>全局精确流量调度新思路-HttpDNS服务详解 <a href="http://blog.csdn.net/zhaqiwen/article/details/42024045" target="_blank" rel="external">http://blog.csdn.net/zhaqiwen/article/details/42024045</a></li>
-<li>百度曾经开源的 cdn 缓存工具OliveHC(国内已经关闭):<a href="https://github.com/Jacky-Li/olivehc" target="_blank" rel="external">https://github.com/Jacky-Li/olivehc</a></li>
-<li>浅谈网站防盗链技术 <a href="http://bbs.csdn.net/topics/110042791" target="_blank" rel="external">http://bbs.csdn.net/topics/110042791</a></li>
-<li>Nginx防盗链详细解说 <a href="http://blog.csdn.net/yuwenruli/article/details/8541952" target="_blank" rel="external">http://blog.csdn.net/yuwenruli/article/details/8541952</a></li>
-<li>随机 url 等相关信息: <a href="http://stackoverflow.com/questions/29674755/a-single-regex-for-all-location-paths-regardless-of-the-name-in-nginx" target="_blank" rel="external">http://stackoverflow.com/questions/29674755/a-single-regex-for-all-location-paths-regardless-of-the-name-in-nginx</a><br><a href="http://stackoverflow.com/questions/367786/prevent-caching-of-ajax-call" target="_blank" rel="external">http://stackoverflow.com/questions/367786/prevent-caching-of-ajax-call</a><br><a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images</a></li>
-<li>探密诡异的HTTP Referer总是为空的原因 <a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://www.cnblogs.com/dreamstudio/archive/2009/04/01/1427202.html</a></li>
-<li>P2P内网穿透原理 <a href="http://stackoverflow.com/questions/126772/how-to-force-a-web-browser-not-to-cache-images" target="_blank" rel="external">http://bbs.cnhonker.com/forum.php?mod=viewthread&amp;tid=7479</a></li>
-<li>P2P之UDP穿透NAT的原理与实现 [转]  <a href="http://blog.csdn.net/lsaturn/article/details/29262" target="_blank" rel="external">http://blog.csdn.net/lsaturn/article/details/29262</a></li>
-<li>从ip138网站爬取ip所处地点 <a href="http://blog.csdn.net/jthink_/article/details/28597757" target="_blank" rel="external">http://blog.csdn.net/jthink_/article/details/28597757</a></li>
-<li>Nginx做前端Proxy时TIME_WAIT过多的问题 <a href="http://www.cnblogs.com/qleelulu/p/3601499.html" target="_blank" rel="external">http://www.cnblogs.com/qleelulu/p/3601499.html</a></li>
-<li>UDP穿透NAT的原理与实现（UDP“打洞”原理）<a href="http://www.cnblogs.com/qleelulu/p/3601499.html" target="_blank" rel="external">http://blog.csdn.net/overmaker/article/details/3201799</a></li>
-</ol>
+		<h3 id="分享">分享</h3><p>闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。<br>github地址：<a href="https://github.com/kiroChen/node_chat" target="_blank" rel="external">https://github.com/kiroChen/node_chat</a><br>在线demo：<a href="http://node-chat-12934.coding.io/" target="_blank" rel="external">http://node-chat-12934.coding.io/</a> (用的是coding.net的演示功能，可能会无法访问)</p>
+<h3 id="功能">功能</h3><ul>
+<li>群聊</li>
+<li>单聊</li>
+<li>发送图片</li>
+<li>发送表情</li>
+</ul>
+<h3 id="运行">运行</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone git@github<span class="class">.com</span>:kiroChen/node_chat<span class="class">.git</span></span><br><span class="line">cd node_chat</span><br><span class="line">npm install</span><br><span class="line">npm start</span><br><span class="line"><span class="comment">//然后打开两个不同浏览器访问localhost:3000,看到效果。</span></span><br></pre></td></tr></table></figure>
+<h3 id="界面">界面</h3><p>如下图<br><img src="https://github.com/kiroChen/node_chat/raw/master/public/images/ui.jpg" alt="聊天室界面"><br>参考资料：<a href="http://www.tuicool.com/articles/yYbq2a" target="_blank" rel="external">http://www.tuicool.com/articles/yYbq2a</a></p>
+<h3 id="问题">问题</h3><p>在cluster模式下不能正常运行，原因是通话句柄无共享，需要redis解决，个人懒，留给有兴趣的朋友去实验</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,7 +138,7 @@ nginx 线程池原文: https://www.nginx.com/blog/th">
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://kirochen.com/2015/08/06/books-20150806/" data-title="转自alsotang | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  <div data-url="http://kirochen.com/2015/07/21/node-chat/" data-title="分享：14年写的一个socketio聊天室，纯练手用 | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -158,18 +152,18 @@ nginx 线程池原文: https://www.nginx.com/blog/th">
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/09/04/about-mongoose/" title="mongoose 使用总结">
+ <a href="/2015/07/21/upload-demo-formidable/" title="Node.js：文件上传简单demo">
   <strong>上一篇：</strong><br/>
   <span>
-  mongoose 使用总结</span>
+  Node.js：文件上传简单demo</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/07/28/client-session/"  title="Node.js：客户端session（补充）">
+<a href="/2015/07/16/nodemailer-send-email/"  title="Node.js：使用nodemailer发送邮件">
  <strong>下一篇：</strong><br/> 
- <span>Node.js：客户端session（补充）
+ <span>Node.js：使用nodemailer发送邮件
 </span>
 </a>
 </div>
@@ -184,7 +178,7 @@ nginx 线程池原文: https://www.nginx.com/blog/th">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">3.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">4.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">5.</span> <span class="toc-text">问题</span></a></li></ol>
  
   </div>
 
