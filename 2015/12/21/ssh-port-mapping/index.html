@@ -4,26 +4,32 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>node-webot | Kiro&#39;s BLOG</title>
+    <title>SSH实现端口映射/端口转发（微信开发小技能） | Kiro&#39;s BLOG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Kiro">
     
 
     
-    <meta name="description" content="介绍微信开发方面所用到的npm包，由大牛朴灵等人组织的，已经在公司的项目中用上了，方便很多。
-github：https://github.com/node-webot">
+    <meta name="description" content="介绍微信开发需要在指定域名上才能开发，造成了一定的调试麻烦，也就是说如果后端的某些业务进行小修改之后进行测试是需要发布到正式服务器上，这多少带来了麻烦。
+最近去广州参加的一个nodejs交流会上，大神老雷给我们分享了他开发一个公众号的一些经验和调试小技巧。其中有一个小技巧恰好能解决以上的问题，用SSH实现端口映射或者端口转发来实现本地调试。
+在此感谢老雷分享的小技巧。
+本地端口转发假定有三台主机A">
 <meta property="og:type" content="article">
-<meta property="og:title" content="node-webot">
-<meta property="og:url" content="http://kirochen.com/2015/10/28/node-webot/index.html">
+<meta property="og:title" content="SSH实现端口映射/端口转发（微信开发小技能）">
+<meta property="og:url" content="http://kirochen.com/2015/12/21/ssh-port-mapping/index.html">
 <meta property="og:site_name" content="Kiro's BLOG">
-<meta property="og:description" content="介绍微信开发方面所用到的npm包，由大牛朴灵等人组织的，已经在公司的项目中用上了，方便很多。
-github：https://github.com/node-webot">
-<meta property="og:updated_time" content="2016-07-21T08:24:38.664Z">
+<meta property="og:description" content="介绍微信开发需要在指定域名上才能开发，造成了一定的调试麻烦，也就是说如果后端的某些业务进行小修改之后进行测试是需要发布到正式服务器上，这多少带来了麻烦。
+最近去广州参加的一个nodejs交流会上，大神老雷给我们分享了他开发一个公众号的一些经验和调试小技巧。其中有一个小技巧恰好能解决以上的问题，用SSH实现端口映射或者端口转发来实现本地调试。
+在此感谢老雷分享的小技巧。
+本地端口转发假定有三台主机A">
+<meta property="og:updated_time" content="2016-07-21T09:41:03.496Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="node-webot">
-<meta name="twitter:description" content="介绍微信开发方面所用到的npm包，由大牛朴灵等人组织的，已经在公司的项目中用上了，方便很多。
-github：https://github.com/node-webot">
+<meta name="twitter:title" content="SSH实现端口映射/端口转发（微信开发小技能）">
+<meta name="twitter:description" content="介绍微信开发需要在指定域名上才能开发，造成了一定的调试麻烦，也就是说如果后端的某些业务进行小修改之后进行测试是需要发布到正式服务器上，这多少带来了麻烦。
+最近去广州参加的一个nodejs交流会上，大神老雷给我们分享了他开发一个公众号的一些经验和调试小技巧。其中有一个小技巧恰好能解决以上的问题，用SSH实现端口映射或者端口转发来实现本地调试。
+在此感谢老雷分享的小技巧。
+本地端口转发假定有三台主机A">
 
     
     <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
@@ -77,14 +83,14 @@ github：https://github.com/node-webot">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/10/28/node-webot/" title="node-webot" itemprop="url">node-webot</a>
+      <a href="/2015/12/21/ssh-port-mapping/" title="SSH实现端口映射/端口转发（微信开发小技能）" itemprop="url">SSH实现端口映射/端口转发（微信开发小技能）</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Kiro" target="_blank" itemprop="author">Kiro</a>
 		
   <p class="article-time">
-    <time datetime="2015-10-28T05:42:47.000Z" itemprop="datePublished"> 发表于 2015-10-28</time>
+    <time datetime="2015-12-21T09:23:35.000Z" itemprop="datePublished"> 发表于 2015-12-21</time>
     
   </p>
 </header>
@@ -93,12 +99,22 @@ github：https://github.com/node-webot">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地端口转发"><span class="toc-number">2.</span> <span class="toc-text">本地端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程端口转发"><span class="toc-number">3.</span> <span class="toc-text">远程端口转发</span></a></li></ol>
 		
 		</div>
 		
-		<h3 id="介绍">介绍</h3><p>微信开发方面所用到的npm包，由大牛朴灵等人组织的，已经在公司的项目中用上了，方便很多。</p>
-<p>github：<a href="https://github.com/node-webot" target="_blank" rel="external">https://github.com/node-webot</a></p>
+		<h3 id="介绍">介绍</h3><p>微信开发需要在指定域名上才能开发，造成了一定的调试麻烦，也就是说如果后端的某些业务进行小修改之后进行测试是需要发布到正式服务器上，这多少带来了麻烦。</p>
+<p>最近去广州参加的一个nodejs交流会上，大神老雷给我们分享了他开发一个公众号的一些经验和调试小技巧。其中有一个小技巧恰好能解决以上的问题，用SSH实现端口映射或者端口转发来实现本地调试。</p>
+<p>在此感谢老雷分享的小技巧。</p>
+<h3 id="本地端口转发">本地端口转发</h3><p>假定有三台主机A、B、C。由于种种原因(无论是防火墙还是路由原因)，AC两台主机之间无法连通。但是B却可以和A、C连通。这时候就可以用本地端口转发来实现A和C通过B来连通。<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">A</span>  192<span class="class">.168</span><span class="class">.7</span><span class="class">.27</span></span><br><span class="line"><span class="tag">B</span>  192<span class="class">.168</span><span class="class">.6</span><span class="class">.19</span></span><br><span class="line"><span class="tag">C</span>  192<span class="class">.168</span><span class="class">.30</span><span class="class">.68</span></span><br></pre></td></tr></table></figure></p>
+<p>6网段和7网段、30网段都相通，但是7网段和30网段不通，现在需要从7网段访问30网段的一个web服务，可以通过本地端口转发来实现。首先确保A、B的ssh服务都开启了允许转发：GatewayPorts yes、AllowTcpForwarding yes</p>
+<p>在A上面执行下面的命令：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">ssh</span> <span class="tag">-l</span> <span class="tag">test</span> <span class="tag">-L</span> 192<span class="class">.168</span><span class="class">.7</span><span class="class">.27</span><span class="pseudo">:59000</span><span class="pseudo">:192</span><span class="class">.168</span><span class="class">.30</span><span class="class">.68</span><span class="pseudo">:80</span> 192<span class="class">.168</span><span class="class">.6</span><span class="class">.190</span></span><br></pre></td></tr></table></figure></p>
+<p>参数-L后面总共有四个用冒号分割的值，分别是’本地地址:本地端口:目标主机:目标主机端口’。这条命令的意思，就是指定SSH绑定本地192.168.7.27的59000端口，然后指定 192.168.6.19将所有的数据，转发到目标主机192.168.30.68的80端口</p>
+<p>如此，我们只要在A上连接A本地地址的59000端口，就等于连上了192.168.30.68的80端口。</p>
+<p>这种本地端口转发适合于A是企业局域网机器，B、C均为广域网上的有独立公网IP的机器，但是企业的防火墙阻止了A和C直接的通讯，但是却允许A和B通讯，这样A就可以通过B和C进行通讯。</p>
+<h3 id="远程端口转发">远程端口转发</h3><p>假定有三台主机A、B、C。A是企业内部局域网的机器，B是企业内部一台具即有私网IP又有公网IP的服务器(类似网关)，C是Internet上具有公网IP的服务器，A可以直接连接到C，B可以直接连接A(内网)，也可以直接连接C(公网)，但是由于A在内网，所以C不能直接连接A，但是C可以通过B连接A。<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">A</span>  <span class="number">10.1.6.234</span> </span><br><span class="line">B  <span class="number">114.80.130.88</span>/<span class="number">10.1.10.1</span> </span><br><span class="line">C  <span class="number">119.75.218.77</span></span><br></pre></td></tr></table></figure></p>
+<p>在B上执行以下命令：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">ssh</span> <span class="tag">-l</span> <span class="tag">taomee</span> <span class="tag">-p</span> 58000 <span class="tag">-R</span> 10<span class="class">.1</span><span class="class">.10</span><span class="class">.1</span><span class="pseudo">:59000</span><span class="pseudo">:10</span><span class="class">.1</span><span class="class">.6</span><span class="class">.234</span><span class="pseudo">:80</span> 119<span class="class">.75</span><span class="class">.218</span><span class="class">.77</span></span><br></pre></td></tr></table></figure></p>
+<p>在C上执行以下命令：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">http:</span><span class="comment">//10.1.6.234</span></span><br></pre></td></tr></table></figure></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -111,7 +127,7 @@ github：https://github.com/node-webot">
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://kirochen.com/2015/10/28/node-webot/" data-title="node-webot | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  <div data-url="http://kirochen.com/2015/12/21/ssh-port-mapping/" data-title="SSH实现端口映射/端口转发（微信开发小技能） | Kiro&#39;s BLOG" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -125,18 +141,18 @@ github：https://github.com/node-webot">
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/12/21/ssh-port-mapping/" title="SSH实现端口映射/端口转发（微信开发小技能）">
+ <a href="/2016/05/21/wx-marketing/" title="个人用的微信活动页面开发的整合">
   <strong>上一篇：</strong><br/>
   <span>
-  SSH实现端口映射/端口转发（微信开发小技能）</span>
+  个人用的微信活动页面开发的整合</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/09/04/about-mongoose/"  title="mongoose 使用总结">
+<a href="/2015/10/28/node-webot/"  title="node-webot">
  <strong>下一篇：</strong><br/> 
- <span>mongoose 使用总结
+ <span>node-webot
 </span>
 </a>
 </div>
@@ -145,7 +161,7 @@ github：https://github.com/node-webot">
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/10/28/node-webot/" data-title="node-webot" data-url="http://kirochen.com/2015/10/28/node-webot/"></div>
+	<div class="ds-thread" data-thread-key="2015/12/21/ssh-port-mapping/" data-title="SSH实现端口映射/端口转发（微信开发小技能）" data-url="http://kirochen.com/2015/12/21/ssh-port-mapping/"></div>
 </section>
 
 
@@ -155,7 +171,7 @@ github：https://github.com/node-webot">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地端口转发"><span class="toc-number">2.</span> <span class="toc-text">本地端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程端口转发"><span class="toc-number">3.</span> <span class="toc-text">远程端口转发</span></a></li></ol>
  
   </div>
 
