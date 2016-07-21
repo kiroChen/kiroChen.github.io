@@ -12,37 +12,19 @@
 
     
     <meta name="description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
-功能
-群聊
-单聊
-发送图片
-发送表情
-
-运行12345git clone gi">
+socketio1234567891011121314151617/ send">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分享：14年写的一个socketio聊天室，纯练手用">
 <meta property="og:url" content="http://kirochen.com/2015/07/21/node-chat/index.html">
 <meta property="og:site_name" content="Kiro's BLOG">
 <meta property="og:description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
-功能
-群聊
-单聊
-发送图片
-发送表情
-
-运行12345git clone gi">
+socketio1234567891011121314151617/ send">
 <meta property="og:image" content="https://github.com/kiroChen/node_chat/raw/master/public/images/ui.jpg">
-<meta property="og:updated_time" content="2016-07-21T02:10:47.622Z">
+<meta property="og:updated_time" content="2016-07-21T06:00:36.180Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分享：14年写的一个socketio聊天室，纯练手用">
 <meta name="twitter:description" content="分享闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。github地址：https://github.com/kiroChen/node_chat在线demo：http://node-chat-12934.coding.io/ (用的是coding.net的演示功能，可能会无法访问)
-功能
-群聊
-单聊
-发送图片
-发送表情
-
-运行12345git clone gi">
+socketio1234567891011121314151617/ send">
 
     
     <link rel="alternative" href="/atom.xml" title="Kiro&#39;s BLOG" type="application/atom+xml">
@@ -112,11 +94,12 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">3.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">4.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">5.</span> <span class="toc-text">问题</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#socketio"><span class="toc-number">2.</span> <span class="toc-text">socketio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">3.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">4.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">5.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">6.</span> <span class="toc-text">问题</span></a></li></ol>
 		
 		</div>
 		
 		<h3 id="分享">分享</h3><p>闲着无聊，写了一个基于socketio方面的聊天室demo。初学者可以一看，大神略过。<br>github地址：<a href="https://github.com/kiroChen/node_chat" target="_blank" rel="external">https://github.com/kiroChen/node_chat</a><br>在线demo：<a href="http://node-chat-12934.coding.io/" target="_blank" rel="external">http://node-chat-12934.coding.io/</a> (用的是coding.net的演示功能，可能会无法访问)</p>
+<h3 id="socketio">socketio</h3><figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/ send <span class="keyword">to</span> current request socket client</span><br><span class="line">socket.emit(<span class="attribute">'message</span>', <span class="string">"this is a test"</span>);</span><br><span class="line"></span><br><span class="line">// sending <span class="keyword">to</span> <span class="keyword">all</span> clients except sender</span><br><span class="line">socket.broadcast.emit(<span class="attribute">'message</span>', <span class="string">"this is a test"</span>);</span><br><span class="line"></span><br><span class="line">// sending <span class="keyword">to</span> <span class="keyword">all</span> clients <span class="keyword">in</span> <span class="attribute">'game</span>' room(channel) except sender</span><br><span class="line">socket.broadcast.<span class="keyword">to</span>(<span class="attribute">'game</span>').emit(<span class="attribute">'message</span>', <span class="attribute">'nice</span> game');</span><br><span class="line"></span><br><span class="line">// sending <span class="keyword">to</span> <span class="keyword">all</span> clients, include sender</span><br><span class="line">io.sockets.emit(<span class="attribute">'message</span>', <span class="string">"this is a test"</span>);</span><br><span class="line"></span><br><span class="line">// sending <span class="keyword">to</span> <span class="keyword">all</span> clients <span class="keyword">in</span> <span class="attribute">'game</span>' room(channel), include sender</span><br><span class="line">io.sockets.<span class="keyword">in</span>(<span class="attribute">'game</span>').emit(<span class="attribute">'message</span>', <span class="attribute">'cool</span> game');</span><br><span class="line"></span><br><span class="line">// sending <span class="keyword">to</span> individual socketid</span><br><span class="line">io.sockets.socket(socketid).emit(<span class="attribute">'message</span>', <span class="attribute">'for</span> your eyes only');</span><br></pre></td></tr></table></figure>
 <h3 id="功能">功能</h3><ul>
 <li>群聊</li>
 <li>单聊</li>
@@ -182,7 +165,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">3.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">4.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">5.</span> <span class="toc-text">问题</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分享"><span class="toc-number">1.</span> <span class="toc-text">分享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#socketio"><span class="toc-number">2.</span> <span class="toc-text">socketio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">3.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">4.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#界面"><span class="toc-number">5.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">6.</span> <span class="toc-text">问题</span></a></li></ol>
  
   </div>
 
